@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Love Compass 💕</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-right: 15px;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            color: #4a5568;
+            font-weight: bold;
+        }
+
+        .love-note {
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            border: none;
+            border-radius: 15px;
+            padding: 15px;
+            width: 100%;
+            min-height: 80px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+
+        .love-note::placeholder {
+            color: #666;
+            font-style: italic;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #ffecd2, #fcb69f);
+            color: #333;
+        }
+
+        .timeline {
+            background: linear-gradient(to right, #ffecd2, #fcb69f);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(255,255,255,0.7);
+            border-radius: 10px;
+        }
+
+        .timeline-date {
+            font-weight: bold;
+            color: #764ba2;
+            min-width: 100px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .mood-selector {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+
+        .mood-btn {
+            background: none;
+            border: 2px solid #e2e8f0;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mood-btn:hover, .mood-btn.active {
+            border-color: #667eea;
+            transform: scale(1.1);
+        }
+
+        .love-bank {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(45deg, #a8edea, #fed6e3);
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .love-score {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .conflict-steps {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .conflict-steps li {
+            counter-increment: step-counter;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: linear-gradient(45deg, #ffecd2, #fcb69f);
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .conflict-steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: -10px;
+            top: -10px;
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .daily-notes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .note-section {
+            background: rgba(255,255,255,0.5);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .affirmation {
+            background: linear-gradient(45deg, #a8edea, #fed6e3);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            font-style: italic;
+            font-size: 1.1rem;
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+
+        .vision-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .vision-item {
+            background: rgba(255,255,255,0.8);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px dashed #667eea;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .vision-item:hover {
+            background: rgba(255,255,255,1);
+            transform: scale(1.05);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .nav-tab {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            margin: 0 5px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab.active {
+            background: rgba(255,255,255,0.9);
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .daily-notes {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Our Love Compass 💕</h1>
+            <p>Building Forever Together - One Day at a Time</p>
+        </header>
+
+        <nav class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('daily')">Daily Love</button>
+            <button class="nav-tab" onclick="showTab('future')">Our Future</button>
+            <button class="nav-tab" onclick="showTab('resolve')">Conflict Care</button>
+            <button class="nav-tab" onclick="showTab('progress')">Love Progress</button>
+        </nav>
+
+        <!-- Daily Love Tab -->
+        <div id="daily-tab" class="tab-content">
+            <div class="grid">
+                <!-- Daily Love Notes -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">💝</span>
+                        <h2 class="card-title">Daily Love Exchange</h2>
+                    </div>
+                    <div class="daily-notes">
+                        <div class="note-section">
+                            <h4>Your Love Note Today 💙</h4>
+                            <textarea class="love-note" placeholder="Write something beautiful for Arpita..."></textarea>
+                            <button class="btn" onclick="saveLoveNote('yours')">Send Love 💙</button>
+                        </div>
+                        <div class="note-section">
+                            <h4>Arpita's Love Note Today 💖</h4>
+                            <textarea class="love-note" placeholder="Write something sweet for him..."></textarea>
+                            <button class="btn" onclick="saveLoveNote('hers')">Send Love 💖</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mood Check-in -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">🌈</span>
+                        <h2 class="card-title">Today's Mood</h2>
+                    </div>
+                    <p>How are you both feeling today?</p>
+                    <div class="mood-selector">
+                        <button class="mood-btn" onclick="setMood('😄')">😄</button>
+                        <button class="mood-btn" onclick="setMood('😊')">😊</button>
+                        <button class="mood-btn" onclick="setMood('😐')">😐</button>
+                        <button class="mood-btn" onclick="setMood('😔')">😔</button>
+                        <button class="mood-btn" onclick="setMood('❤️')">❤️</button>
+                    </div>
+                    <div id="mood-status" class="affirmation">Select your mood above ✨</div>
+                </div>
+
+                <!-- Love Bank -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">🏦</span>
+                        <h2 class="card-title">Love Bank Balance</h2>
+                    </div>
+                    <div class="love-bank">
+                        <div class="love-score" id="love-score">850</div>
+                        <p>Love Points Accumulated 💰</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 85%"></div>
+                        </div>
+                        <p><small>Every kind act, hug, and "I love you" adds points!</small></p>
+                    </div>
+                    <button class="btn btn-secondary" onclick="addLovePoints()">Add Love Deposit +10 💕</button>
+                </div>
+
+                <!-- Daily Affirmation -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">✨</span>
+                        <h2 class="card-title">Today's Love Affirmation</h2>
+                    </div>
+                    <div class="affirmation" id="daily-affirmation">
+                        "We choose love over fear, understanding over judgment, and together over apart. Our love grows stronger each day." 💕
+                    </div>
+                    <button class="btn" onclick="newAffirmation()">New Affirmation ✨</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Our Future Tab -->
+        <div id="future-tab" class="tab-content hidden">
+            <div class="grid">
+                <!-- Timeline of Us -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">📅</span>
+                        <h2 class="card-title">Our Love Timeline</h2>
+                    </div>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <span class="timeline-date">Past</span>
+                            <span>First met and fell in love 💕</span>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-date">Past</span>
+                            <span>Amazing trips together (California, Colorado, Florida) ✈️</span>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-date">Now</span>
+                            <span>Rebuilding stronger than ever 💪</span>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-date">Future</span>
+                            <span>Engagement and saying YES forever 💍</span>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-date">Future</span>
+                            <span>Dream wedding and new beginnings 👰🤵</span>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-date">Future</span>
+                            <span>Our forever home and family 🏡</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vision Board -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">🎯</span>
+                        <h2 class="card-title">Our Dream Vision Board</h2>
+                    </div>
+                    <div class="vision-board">
+                        <div class="vision-item" onclick="addVision()">
+                            <div>💍</div>
+                            <p>Engagement</p>
+                        </div>
+                        <div class="vision-item" onclick="addVision()">
+                            <div>🏡</div>
+                            <p>Dream Home</p>
+                        </div>
+                        <div class="vision-item" onclick="addVision()">
+                            <div>✈️</div>
+                            <p>World Travel</p>
+                        </div>
+                        <div class="vision-item" onclick="addVision()">
+                            <div>👶</div>
+                            <p>Family</p>
+                        </div>
+                        <div class="vision-item" onclick="addVision()">
+                            <div>🎓</div>
+                            <p>Growth Together</p>
+                        </div>
+                        <div class="vision-item" onclick="addVision()">
+                            <div>💕</div>
+                            <p>Forever Love</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Commitment Tracker -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">📈</span>
+                        <h2 class="card-title">Commitment Progress</h2>
+                    </div>
+                    <div>
+                        <h4>From Confusion to Clarity</h4>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="commitment-progress" style="width: 75%"></div>
+                        </div>
+                        <p>75% Clear on Our Forever Future</p>
+                        
+                        <h4 style="margin-top: 20px;">Next Milestones</h4>
+                        <ul style="margin-top: 10px;">
+                            <li>✅ Honest conversations about the future</li>
+                            <li>✅ Rebuilding trust and intimacy</li>
+                            <li>🔄 Working through past concerns together</li>
+                            <li>⏳ Planning our engagement timeline</li>
+                            <li>⏳ Setting our wedding vision</li>
+                        </ul>
+                    </div>
+                    <button class="btn" onclick="updateCommitment()">Update Progress 📈</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conflict Care Tab -->
+        <div id="resolve-tab" class="tab-content hidden">
+            <div class="grid">
+                <!-- Conflict Resolution Guide -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">🕊️</span>
+                        <h2 class="card-title">Our Peace Process</h2>
+                    </div>
+                    <ol class="conflict-steps">
+                        <li><strong>Pause & Breathe</strong> - Take 5 minutes to calm down before speaking</li>
+                        <li><strong>Listen First</strong> - Let each other express feelings without interrupting</li>
+                        <li><strong>Speak with Love</strong> - Use "I feel" instead of "You always"</li>
+                        <li><strong>Find the Real Issue</strong> - What's the deeper need behind the hurt?</li>
+                        <li><strong>Solution Together</strong> - Work as a team, not opponents</li>
+                        <li><strong>Hug it Out</strong> - Physical reconnection after resolution</li>
+                    </ol>
+                    <button class="btn" onclick="startPeaceProcess()">Start Peace Process 🕊️</button>
+                </div>
+
+                <!-- Relationship Boundaries -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">🛡️</span>
+                        <h2 class="card-title">Our Love Boundaries</h2>
+                    </div>
+                    <div>
+                        <h4>We Promise Each Other:</h4>
+                        <ul style="margin: 15px 0; line-height: 1.8;">
+                            <li>💝 To always fight FOR our relationship, not against each other</li>
+                            <li>🗣️ To use words that heal, not hurt</li>
+                            <li>⏰ To never use silence as punishment</li>
+                            <li>🤝 To respect each other's past and focus on our future</li>
+                            <li>💍 To choose love and commitment over fear and confusion</li>
+                            <li>🤗 To always come back to each other with open hearts</li>
+                        </ul>
+                    </div>
+                    <textarea class="love-note" placeholder="Add your own boundary or promise..."></textarea>
+                    <button class="btn" onclick="addBoundary()">Add Our Promise 🤝</button>
+                </div>
+
+                <!-- Emergency Love Kit -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">🆘</span>
+                        <h2 class="card-title">Emergency Love Kit</h2>
+                    </div>
+                    <p>When things feel hard, remember:</p>
+                    <div class="affirmation">
+                        "Every couple fights. Not every couple heals. We choose to heal, to grow, and to love deeper after every storm." 🌈
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button class="btn" onclick="sendLoveEmergency()" style="margin: 5px;">Send Love SOS 💕</button>
+                        <button class="btn btn-secondary" onclick="requestHug()" style="margin: 5px;">Request Hug 🤗</button>
+                    </div>
+                    <div id="emergency-response" style="margin-top: 15px; font-style: italic; color: #667eea;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Tab -->
+        <div id="progress-tab" class="tab-content hidden">
+            <div class="grid">
+                <!-- Weekly Check-in -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">📊</span>
+                        <h2 class="card-title">Weekly Love Check-in</h2>
+                    </div>
+                    <div>
+                        <h4>This Week's Reflection</h4>
+                        <div style="margin: 15px 0;">
+                            <label><strong>What made us happy this week?</strong></label>
+                            <textarea class="love-note" placeholder="Share your happy moments..."></textarea>
+                        </div>
+                        <div style="margin: 15px 0;">
+                            <label><strong>What felt challenging?</strong></label>
+                            <textarea class="love-note" placeholder="What can we work on together?"></textarea>
+                        </div>
+                        <div style="margin: 15px 0;">
+                            <label><strong>One thing to improve next week?</strong></label>
+                            <textarea class="love-note" placeholder="How can we love better?"></textarea>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="saveCheckIn()">Save Our Check-in 📝</button>
+                </div>
+
+                <!-- Love Growth Chart -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">📈</span>
+                        <h2 class="card-title">Our Love Growth</h2>
+                    </div>
+                    <div>
+                        <h4>Trust Level</h4>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 90%"></div>
+                        </div>
+                        <p>90% - Rebuilding beautifully</p>
+                        
+                        <h4 style="margin-top: 20px;">Communication</h4>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 85%"></div>
+                        </div>
+                        <p>85% - Learning to speak with love</p>
+                        
+                        <h4 style="margin-top: 20px;">Future Vision</h4>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 80%"></div>
+                        </div>
+                        <p>80% - Clarity growing stronger</p>
+                        
+                        <h4 style="margin-top: 20px;">Overall Happiness</h4>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 95%"></div>
+                        </div>
+                        <p>95% - We're amazing together! 💕</p>
+                    </div>
+                </div>
+
+                <!-- Memory Vault -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">📚</span>
+                        <h2 class="card-title">Love Letters Vault</h2>
+                    </div>
+                    <div>
+                        <div class="affirmation">
+                            "Every time you doubt, come here and remember how much we mean to each other." 💌
+                        </div>
+                        <textarea class="love-note" placeholder="Write a love letter to save forever..."></textarea>
+                        <button class="btn" onclick="saveLoveLetter()">Save in Vault 💌</button>
+                        
+                        <div style="margin-top: 20px;">
+                            <h4>Saved Letters:</h4>
+                            <div id="love-letters" style="margin-top: 10px;">
+                                <div style="background: rgba(255,255,255,0.7); padding: 15px; border-radius: 10px; margin: 10px 0;">
+                                    <em>"You are my peace in every storm, my joy in every moment. Building forever with you is my greatest dream." 💕</em>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab Navigation
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            
+            // Remove active class from all nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.remove('hidden');
+            
+            // Add active class to clicked nav tab
+            event.target.classList.add('active');
+        }
+
+        // Daily Functions
+        function saveLoveNote(sender) {
+            const note = event.target.previousElementSibling.value;
+            if (note.trim()) {
+                alert(`❤️ Love note saved! Your partner will see this beautiful message.`);
+                event.target.previousElementSibling.value = '';
+            }
+        }
+
+        function setMood(emoji) {
+            document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('mood-status').innerHTML = `Today's mood: ${emoji} - You're both connected! 💕`;
+        }
+
+        function addLovePoints() {
+            const scoreElement = document.getElementById('love-score');
+            let currentScore = parseInt(scoreElement.textContent);
+            currentScore += 10;
+            scoreElement.textContent = currentScore;
+            
+            // Update progress bar
+            const progressBar = scoreElement.parentElement.querySelector('.progress-fill');
+            const newWidth = Math.min(95, (currentScore / 1000) * 100);
+            progressBar.style.width = newWidth + '%';
+            
+            alert('💕 +10 Love Points added! Every act of love makes us stronger!');
+        }
+
+        function newAffirmation() {
+            const affirmations = [
+                "We choose love over fear, understanding over judgment, and together over apart. Our love grows stronger each day. 💕",
+                "Every challenge we face together makes our bond unbreakable. We are building something beautiful. 🌟",
+                "Our past shapes us, but our love defines us. We write our future with every loving choice. ✨",
+                "In a world of temporary things, we are building forever. Our love is our greatest achievement. 💍",
+                "We are not perfect, but we are perfect for each other. Our love heals and grows daily. 🌱",
+                "Every sunrise brings new chances to love deeper, communicate better, and build stronger. 🌅"
+            ];
+            
+            const randomAffirmation = affirmations[Math.floor(Math.random() * affirmations.length)];
+            document.getElementById('daily-affirmation').innerHTML = randomAffirmation;
+        }
+
+        // Conflict Resolution Functions
+        function startPeaceProcess() {
+            alert('🕊️ Peace Process Started!\n\n1. Both take 5 deep breaths\n2. Set a timer for 20 minutes\n3. Follow our loving steps\n4. Remember: We fight FOR our love, not against each other!\n\nYou got this! 💕');
+        }
+
+        function addBoundary() {
+            const newBoundary = event.target.previousElementSibling.value;
+            if (newBoundary.trim()) {
+                alert('🤝 New promise added to our relationship! We commit to loving better every day.');
+                event.target.previousElementSibling.value = '';
+            }
+        }
+
+        function sendLoveEmergency() {
+            document.getElementById('emergency-response').innerHTML = '💕 Love SOS sent! Remember: This feeling will pass. Your love is stronger than any storm. Breathe, then reach out to each other. 🤗';
+        }
+
+        function requestHug() {
+            document.getElementById('emergency-response').innerHTML = '🤗 Hug request sent! Physical touch heals hearts. Find each other and hold tight. Love always wins. 💕';
+        }
+
+        // Future Planning Functions
+        function addVision() {
+            alert('🎯 Dream added to our vision board! Every dream we share brings us closer to our forever future! 💕');
+        }
+
+        function updateCommitment() {
+            const progressBar = document.getElementById('commitment-progress');
+            let currentWidth = parseInt(progressBar.style.width);
+            if (currentWidth < 100) {
+                currentWidth += 5;
+                progressBar.style.width = currentWidth + '%';
+                alert(`📈 Commitment progress updated to ${currentWidth}%! We're getting clearer on our forever future! 💍`);
+            } else {
+                alert('🎉 100% Committed! Ready for forever together! 💕');
+            }
+        }
+
+        // Progress Functions
+        function saveCheckIn() {
+            alert('📝 Weekly check-in saved! Reflecting together helps us grow stronger. Thank you for investing in our love! 💕');
+        }
+
+        function saveLoveLetter() {
+            const letter = event.target.previousElementSibling.value;
+            if (letter.trim()) {
+                const letterDiv = document.createElement('div');
+                letterDiv.style.cssText = 'background: rgba(255,255,255,0.7); padding: 15px; border-radius: 10px; margin: 10px 0;';
+                letterDiv.innerHTML = `<em>"${letter}" 💕</em>`;
+                document.getElementById('love-letters').appendChild(letterDiv);
+                
+                alert('💌 Love letter saved forever! Whenever doubt creeps in, come back and read how much you mean to each other.');
+                event.target.previousElementSibling.value = '';
+            }
+        }
+
+        // Load initial data
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial mood
+            setMood('❤️');
+            
+            // Welcome message
+            setTimeout(() => {
+                alert('💕 Welcome to Our Love Compass!\n\nThis is your safe space to:\n✨ Share daily love\n💍 Plan your future\n🕊️ Resolve conflicts with care\n📈 Track your growth together\n\nBuilding forever, one day at a time! 🌟');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
