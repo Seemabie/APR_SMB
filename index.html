@@ -3,6 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#ff6b9d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Love Compass">
+    <link rel="apple-touch-icon" href="/icons/icon-152x152.png">
+    
+    <!-- Additional Meta Tags -->
+    <meta name="description" content="Seemab's eternal love for his beautiful Arpita - Building forever together">
+    <meta name="keywords" content="love, relationship, couple, Seemab, Arpita">
+    
     <title>Seemab 💙 Arpita Love Compass 💕</title>
     <style>
         * {
@@ -580,15 +593,43 @@
             margin: 5px;
         }
 
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+        /* PWA Install Button */
+        .install-prompt {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.4);
+            cursor: pointer;
+            display: none;
+            z-index: 1000;
+            font-weight: bold;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff6b9d;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -596,7 +637,10 @@
     <!-- Floating Hearts Background -->
     <div class="floating-hearts" id="floating-hearts"></div>
 
-    <!-- Notification Center -->
+    <!-- PWA Install Prompt -->
+    <div class="install-prompt" id="install-prompt">
+        📱 Install Love Compass App!
+    </div>
     <div class="notification-center" id="notification-center">
         <h4 style="color: #c44569; margin-bottom: 15px;">💕 Love Activity</h4>
         <div id="notifications"></div>
@@ -1083,14 +1127,137 @@
             });
         }
 
-        // Request notification permission
-        function requestNotificationPermission() {
-            if ('Notification' in window && Notification.permission === 'default') {
-                Notification.requestPermission().then(permission => {
-                    if (permission === 'granted') {
-                        addNotification('🔔 Browser notifications enabled for Seemab & Arpita!');
+        // PWA and Enhanced Notifications
+        let deferredPrompt;
+        let loveNotifications;
+
+        // PWA Install functionality
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('install-prompt').style.display = 'block';
+        });
+
+        document.getElementById('install-prompt').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    addNotification('📱 Love Compass app installed! Welcome to your home screen! 💕');
+                }
+                deferredPrompt = null;
+                document.getElementById('install-prompt').style.display = 'none';
+            }
+        });
+
+        // Enhanced notification system for mobile
+        class MobileLoveNotifications {
+            constructor() {
+                this.isSupported = 'Notification' in window;
+                this.permission = Notification.permission;
+            }
+
+            async requestPermission() {
+                if (this.isSupported && this.permission === 'default') {
+                    this.permission = await Notification.requestPermission();
+                    if (this.permission === 'granted') {
+                        addNotification('🔔 Mobile notifications enabled! You\'ll get alerts when your partner needs you! 💕');
+                        return true;
                     }
-                });
+                }
+                return this.permission === 'granted';
+            }
+
+            sendNotification(title, message, options = {}) {
+                if (this.permission === 'granted') {
+                    const notification = new Notification(title, {
+                        body: message,
+                        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💕</text></svg>',
+                        badge: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💕</text></svg>',
+                        vibrate: [200, 100, 200, 100, 200],
+                        requireInteraction: true,
+                        silent: false,
+                        ...options
+                    });
+
+                    notification.onclick = () => {
+                        window.focus();
+                        notification.close();
+                    };
+
+                    // Auto close after 10 seconds
+                    setTimeout(() => notification.close(), 10000);
+
+                    return notification;
+                }
+            }
+
+            sendLoveSOSAlert(sender) {
+                return this.sendNotification(
+                    '🆘 LOVE SOS ALERT!',
+                    `${sender} needs your love and support RIGHT NOW! Drop everything and reach out! 💕`,
+                    {
+                        tag: 'love-sos',
+                        requireInteraction: true,
+                        vibrate: [300, 100, 300, 100, 300],
+                        actions: [
+                            { action: 'respond', title: 'Respond Now 💕' },
+                            { action: 'call', title: 'Call Them 📞' }
+                        ]
+                    }
+                );
+            }
+
+            sendHugRequest(sender) {
+                return this.sendNotification(
+                    '🤗 HUG REQUEST!',
+                    `${sender} is asking for cuddles and physical comfort! Time for snuggles! 💕`,
+                    {
+                        tag: 'hug-request',
+                        vibrate: [100, 50, 100, 50, 100],
+                        actions: [
+                            { action: 'respond', title: 'On my way! 🏃‍♂️' },
+                            { action: 'message', title: 'Send Love 💌' }
+                        ]
+                    }
+                );
+            }
+
+            sendLoveNoteAlert(sender) {
+                return this.sendNotification(
+                    '💌 NEW LOVE NOTE!',
+                    `${sender} sent you a beautiful love message! Your heart is about to melt! ✨`,
+                    {
+                        tag: 'love-note',
+                        vibrate: [100, 100, 100],
+                        actions: [
+                            { action: 'read', title: 'Read Now 👀' },
+                            { action: 'reply', title: 'Reply 💕' }
+                        ]
+                    }
+                );
+            }
+
+            sendMoodUpdate(sender, mood, message) {
+                return this.sendNotification(
+                    `${mood} Mood Update`,
+                    `${sender}: ${message}`,
+                    {
+                        tag: 'mood-update',
+                        vibrate: [100, 50, 100]
+                    }
+                );
+            }
+
+            sendLovePointsAlert(points) {
+                return this.sendNotification(
+                    '💰 Love Points Added!',
+                    `+10 Love Points! Current balance: ${points}. Your love keeps growing! 💕`,
+                    {
+                        tag: 'love-points',
+                        vibrate: [50, 50, 50]
+                    }
+                );
             }
         }
         // Create floating hearts
@@ -1175,6 +1342,11 @@
                     
                     addNotification(`💌 ${senderName} sent a beautiful love note to ${recipientName}!`);
                     
+                    // Send mobile notification
+                    if (loveNotifications) {
+                        loveNotifications.sendLoveNoteAlert(senderName);
+                    }
+                    
                     alert(`💕✨ Love note saved! ${recipientName} will see this beautiful message and feel so loved! 🌸`);
                     textarea.value = '';
                     createFloatingHeart();
@@ -1229,6 +1401,11 @@
             }
             
             addNotification(`💰 +10 Love Points added! Current balance: ${currentScore} points`);
+            
+            // Send mobile notification
+            if (loveNotifications) {
+                loveNotifications.sendLovePointsAlert(currentScore);
+            }
             alert('💕✨ +10 Love Points added! Every beautiful act of love makes Seemab & Arpita\'s bond stronger! 🌟');
         }
 
@@ -1274,8 +1451,17 @@
             const randomMessage = messages[Math.floor(Math.random() * messages.length)];
             document.getElementById('emergency-response').innerHTML = randomMessage;
             
+            // Determine who sent the SOS
+            const sender = Math.random() > 0.5 ? 'Seemab' : 'Arpita';
+            const recipient = sender === 'Seemab' ? 'Arpita' : 'Seemab';
+            
             // Track emergency
-            addNotification('🆘 Love SOS activated! Someone needs extra love and support right now.');
+            addNotification(`🆘 ${sender} activated Love SOS! ${recipient} needs to provide immediate support!`);
+            
+            // Send mobile notification
+            if (loveNotifications) {
+                loveNotifications.sendLoveSOSAlert(sender);
+            }
             
             // Create multiple hearts for emergency
             for (let i = 0; i < 5; i++) {
@@ -1293,7 +1479,16 @@
             const randomHugMessage = hugMessages[Math.floor(Math.random() * hugMessages.length)];
             document.getElementById('emergency-response').innerHTML = randomHugMessage;
             
-            addNotification('🤗 Hug request sent! Someone needs cuddles and physical comfort.');
+            // Determine who requested the hug
+            const sender = Math.random() > 0.5 ? 'Seemab' : 'Arpita';
+            
+            addNotification(`🤗 ${sender} requested cuddles and physical comfort!`);
+            
+            // Send mobile notification
+            if (loveNotifications) {
+                loveNotifications.sendHugRequest(sender);
+            }
+            
             createSparkles(event.target);
         }
 
@@ -1383,6 +1578,9 @@
 
         // Load initial data
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize mobile notifications
+            loveNotifications = new MobileLoveNotifications();
+            
             // Load saved data
             loadData();
             
@@ -1393,7 +1591,9 @@
             document.querySelector('.mood-btn[onclick*="❤️"]').click();
             
             // Request notification permission
-            requestNotificationPermission();
+            setTimeout(() => {
+                loveNotifications.requestPermission();
+            }, 2000);
             
             // Create initial floating hearts
             setTimeout(() => createFloatingHeart(), 500);
@@ -1407,8 +1607,8 @@
             
             // Welcome message
             setTimeout(() => {
-                alert('💕✨ Welcome to Seemab & Arpita Love Compass! 👑\n\nThis beautiful space is created just for you two to:\n🌟 Share daily love and joy\n💍 Plan your magical future together\n🕊️ Resolve any conflicts with love and care\n📈 Watch your amazing love grow stronger\n\nAll your activities are saved and you\'ll get notifications when either of you uses the app!\n\nBuilding forever together, one beautiful day at a time! Seemab & Arpita are absolutely incredible! 💕🌸✨');
-            }, 2000);
+                alert('💕✨ Welcome to Seemab & Arpita Love Compass! 👑\n\nThis beautiful space is created just for you two to:\n🌟 Share daily love and joy\n💍 Plan your magical future together\n🕊️ Resolve any conflicts with love and care\n📈 Watch your amazing love grow stronger\n\n📱 INSTALL AS AN APP:\n• Tap "Install Love Compass App" to add to home screen\n• Get instant notifications when your partner needs you\n• Works offline and feels like a real app!\n\nAll your activities are saved and you\'ll get mobile notifications!\n\nBuilding forever together, one beautiful day at a time! 💕🌸✨');
+            }, 3000);
         });
 
         // Add some interactive easter eggs
