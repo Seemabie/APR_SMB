@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Love Compass 💕</title>
+    <title>Seemab 💙 Arpita Love Compass 💕</title>
     <style>
         * {
             margin: 0;
@@ -519,16 +519,98 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* Notification System */
+        .notification-center {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(255, 105, 180, 0.3);
+            border: 2px solid rgba(255, 192, 203, 0.4);
+            max-width: 300px;
+            z-index: 1000;
+        }
+
+        .notification {
+            background: linear-gradient(135deg, #ff9a9e, #fecfef);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            border-left: 5px solid #ff6b9d;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification:last-child {
+            margin-bottom: 0;
+        }
+
+        .notification-time {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .activity-log {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+
+        .data-export {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body>
     <!-- Floating Hearts Background -->
     <div class="floating-hearts" id="floating-hearts"></div>
 
+    <!-- Notification Center -->
+    <div class="notification-center" id="notification-center">
+        <h4 style="color: #c44569; margin-bottom: 15px;">💕 Love Activity</h4>
+        <div id="notifications"></div>
+        <button class="data-export" onclick="exportData()">📥 Export All Data</button>
+        <button class="data-export" onclick="clearNotifications()">🗑️ Clear</button>
+    </div>
+
     <div class="container">
         <header class="header">
-            <h1>Our Love Compass 💕</h1>
+            <h1>Seemab 💙 Arpita Love Compass 💕</h1>
             <p>Building Forever Together - One Beautiful Day at a Time ✨</p>
+            <p style="font-size: 1rem; margin-top: 10px; color: #c44569;">
+                <strong>Seemab's eternal love for his beautiful Arpita</strong> 🌸👑
+            </p>
         </header>
 
         <nav class="nav-tabs">
@@ -549,14 +631,14 @@
                     </div>
                     <div class="daily-notes">
                         <div class="note-section">
-                            <h4>Your Love Note Today 💙</h4>
-                            <textarea class="love-note" placeholder="Write something beautiful for Arpita... ✨"></textarea>
-                            <button class="btn" onclick="saveLoveNote('yours')">Send Love 💙</button>
+                            <h4>Seemab's Love Note Today 💙</h4>
+                            <textarea class="love-note" id="seemab-note" placeholder="Seemab, write something beautiful for Arpita... ✨"></textarea>
+                            <button class="btn" onclick="saveLoveNote('seemab')">Send Love to Arpita 💙</button>
                         </div>
                         <div class="note-section">
                             <h4>Arpita's Love Note Today 💖</h4>
-                            <textarea class="love-note" placeholder="Write something sweet for him... 🌸"></textarea>
-                            <button class="btn" onclick="saveLoveNote('hers')">Send Love 💖</button>
+                            <textarea class="love-note" id="arpita-note" placeholder="Arpita, write something sweet for Seemab... 🌸"></textarea>
+                            <button class="btn" onclick="saveLoveNote('arpita')">Send Love to Seemab 💖</button>
                         </div>
                     </div>
                 </div>
@@ -567,7 +649,7 @@
                         <span class="card-icon">🌈</span>
                         <h2 class="card-title">Today's Mood</h2>
                     </div>
-                    <p>How are you both feeling today?</p>
+                    <p>How are Seemab and Arpita feeling today?</p>
                     <div class="mood-selector">
                         <button class="mood-btn" onclick="setMood('😄')" title="Excited">😄</button>
                         <button class="mood-btn" onclick="setMood('😊')" title="Happy">😊</button>
@@ -606,6 +688,20 @@
                     </div>
                     <button class="btn" onclick="newAffirmation()">New Affirmation ✨</button>
                 </div>
+                <!-- Activity Log -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">📋</span>
+                        <h2 class="card-title">Recent Love Activity</h2>
+                    </div>
+                    <div class="activity-log" id="activity-log">
+                        <div class="activity-item">
+                            <strong>💕 Welcome!</strong> Seemab & Arpita's Love Compass is ready!
+                            <div class="notification-time" id="welcome-time"></div>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="viewAllActivity()">View All Activity 📜</button>
+                </div>
             </div>
         </div>
 
@@ -621,11 +717,11 @@
                     <div class="timeline">
                         <div class="timeline-item">
                             <span class="timeline-date">Past ✨</span>
-                            <span>First met and fell deeply in love 💕</span>
+                            <span>Seemab met beautiful Arpita and fell deeply in love 💕</span>
                         </div>
                         <div class="timeline-item">
                             <span class="timeline-date">Past 🌟</span>
-                            <span>Amazing adventures together (California, Colorado, Florida) ✈️</span>
+                            <span>Seemab & Arpita's amazing adventures together (California, Colorado, Florida) ✈️</span>
                         </div>
                         <div class="timeline-item">
                             <span class="timeline-date">Now 💪</span>
@@ -633,15 +729,15 @@
                         </div>
                         <div class="timeline-item">
                             <span class="timeline-date">Soon 💍</span>
-                            <span>Engagement and saying YES to forever</span>
+                            <span>Seemab asking Arpita: "Will you marry me?" and she says YES! 💍</span>
                         </div>
                         <div class="timeline-item">
                             <span class="timeline-date">Future 👰</span>
-                            <span>Dream wedding and new beautiful beginnings</span>
+                            <span>Seemab & Arpita's magical dream wedding and new beautiful beginnings 👰🤵</span>
                         </div>
                         <div class="timeline-item">
                             <span class="timeline-date">Forever 🏡</span>
-                            <span>Our dream home, family, and endless love</span>
+                            <span>Seemab & Arpita's dream home, beautiful family, and endless love 🏡👶</span>
                         </div>
                     </div>
                 </div>
@@ -734,7 +830,7 @@
                         <h2 class="card-title">Our Love Promises</h2>
                     </div>
                     <div>
-                        <h4>💖 We Promise Each Other:</h4>
+                        <h4>💖 Seemab & Arpita Promise Each Other:</h4>
                         <ul style="margin: 15px 0; line-height: 2;">
                             <li>💝 To always fight FOR our relationship, not against each other</li>
                             <li>🗣️ To use words that heal and build up, not tear down</li>
@@ -855,6 +951,148 @@
     </div>
 
     <script>
+        // Data Storage and Notification System
+        let loveData = {
+            notes: [],
+            activities: [],
+            moods: [],
+            lovePoints: 850,
+            commitmentProgress: 80,
+            boundaries: [],
+            letters: [],
+            checkIns: []
+        };
+
+        // Load existing data
+        function loadData() {
+            const saved = localStorage.getItem('seemab-arpita-love-data');
+            if (saved) {
+                loveData = { ...loveData, ...JSON.parse(saved) };
+                updateUI();
+            }
+        }
+
+        // Save data
+        function saveData() {
+            localStorage.setItem('seemab-arpita-love-data', JSON.stringify(loveData));
+        }
+
+        // Add notification
+        function addNotification(message, type = 'activity') {
+            const notification = {
+                id: Date.now(),
+                message: message,
+                type: type,
+                timestamp: new Date().toLocaleString(),
+                time: new Date()
+            };
+
+            loveData.activities.unshift(notification);
+            
+            // Keep only last 50 activities
+            if (loveData.activities.length > 50) {
+                loveData.activities = loveData.activities.slice(0, 50);
+            }
+
+            saveData();
+            updateNotifications();
+            updateActivityLog();
+
+            // Show browser notification if available
+            if (Notification.permission === 'granted') {
+                new Notification('💕 Seemab & Arpita Love Compass', {
+                    body: message,
+                    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💕</text></svg>'
+                });
+            }
+        }
+
+        // Update notification display
+        function updateNotifications() {
+            const container = document.getElementById('notifications');
+            container.innerHTML = '';
+            
+            const recent = loveData.activities.slice(0, 5);
+            recent.forEach(activity => {
+                const notif = document.createElement('div');
+                notif.className = 'notification';
+                notif.innerHTML = `
+                    <div>${activity.message}</div>
+                    <div class="notification-time">${activity.timestamp}</div>
+                `;
+                container.appendChild(notif);
+            });
+        }
+
+        // Update activity log
+        function updateActivityLog() {
+            const container = document.getElementById('activity-log');
+            container.innerHTML = '';
+            
+            loveData.activities.slice(0, 10).forEach(activity => {
+                const item = document.createElement('div');
+                item.className = 'activity-item';
+                item.innerHTML = `
+                    <strong>${activity.message}</strong>
+                    <div class="notification-time">${activity.timestamp}</div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Export data function
+        function exportData() {
+            const dataStr = JSON.stringify(loveData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `seemab-arpita-love-data-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            addNotification('📥 Love data exported by ' + (Math.random() > 0.5 ? 'Seemab' : 'Arpita') + '!');
+        }
+
+        // Clear notifications
+        function clearNotifications() {
+            loveData.activities = [];
+            saveData();
+            updateNotifications();
+            updateActivityLog();
+            addNotification('🗑️ Notifications cleared!');
+        }
+
+        // Update UI with saved data
+        function updateUI() {
+            document.getElementById('love-score').textContent = loveData.lovePoints;
+            document.getElementById('commitment-progress').style.width = loveData.commitmentProgress + '%';
+            
+            // Update progress bar
+            const progressBar = document.querySelector('#love-score').parentElement.querySelector('.progress-fill');
+            const newWidth = Math.min(100, (loveData.lovePoints / 1000) * 100);
+            progressBar.style.width = newWidth + '%';
+            
+            // Load saved letters
+            const lettersContainer = document.getElementById('love-letters');
+            lettersContainer.innerHTML = '';
+            loveData.letters.forEach(letter => {
+                const letterDiv = document.createElement('div');
+                letterDiv.style.cssText = 'background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0.6)); padding: 20px; border-radius: 15px; margin: 15px 0; border: 2px solid rgba(255, 192, 203, 0.4);';
+                letterDiv.innerHTML = `<em>"${letter.text}" 💕✨</em><br><small style="color:#666;">- ${letter.author}, ${letter.date}</small>`;
+                lettersContainer.appendChild(letterDiv);
+            });
+        }
+
+        // Request notification permission
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        addNotification('🔔 Browser notifications enabled for Seemab & Arpita!');
+                    }
+                });
+            }
+        }
         // Create floating hearts
         function createFloatingHeart() {
             const heart = document.createElement('div');
@@ -911,7 +1149,7 @@
 
         // Daily Functions
         function saveLoveNote(sender) {
-            const textarea = event.target.previousElementSibling;
+            const textarea = sender === 'seemab' ? document.getElementById('seemab-note') : document.getElementById('arpita-note');
             const note = textarea.value;
             if (note.trim()) {
                 // Add cute loading animation
@@ -920,7 +1158,24 @@
                 
                 setTimeout(() => {
                     event.target.innerHTML = originalText;
-                    alert(`💕✨ Love note saved! Your partner will see this beautiful message and feel so loved! 🌸`);
+                    
+                    // Save the note
+                    const noteData = {
+                        sender: sender === 'seemab' ? 'Seemab' : 'Arpita',
+                        recipient: sender === 'seemab' ? 'Arpita' : 'Seemab',
+                        text: note,
+                        timestamp: new Date().toLocaleString()
+                    };
+                    
+                    loveData.notes.unshift(noteData);
+                    saveData();
+                    
+                    const senderName = sender === 'seemab' ? 'Seemab' : 'Arpita';
+                    const recipientName = sender === 'seemab' ? 'Arpita' : 'Seemab';
+                    
+                    addNotification(`💌 ${senderName} sent a beautiful love note to ${recipientName}!`);
+                    
+                    alert(`💕✨ Love note saved! ${recipientName} will see this beautiful message and feel so loved! 🌸`);
                     textarea.value = '';
                     createFloatingHeart();
                 }, 1000);
@@ -932,14 +1187,24 @@
             event.target.classList.add('active');
             
             const messages = {
-                '😄': "Amazing! You're both radiating joy today! ✨💕",
+                '😄': "Amazing! Seemab & Arpita are radiating joy today! ✨💕",
                 '😊': "So sweet! Happy hearts make the strongest love! 🌸💙",
                 '😐': "That's okay! Every day is different, love remains constant! 💜",
                 '😔': "Sending extra love your way! Tomorrow will be brighter! 🌈💕",
-                '❤️': "In love and it shows! You two are absolutely beautiful together! 💕✨"
+                '❤️': "In love and it shows! Seemab & Arpita are absolutely beautiful together! 💕✨"
             };
             
             document.getElementById('mood-status').innerHTML = messages[emoji];
+            
+            // Save mood
+            loveData.moods.unshift({
+                emoji: emoji,
+                message: messages[emoji],
+                timestamp: new Date().toLocaleString()
+            });
+            saveData();
+            
+            addNotification(`${emoji} Mood updated: ${messages[emoji]}`);
             createSparkles(event.target);
         }
 
@@ -948,6 +1213,10 @@
             let currentScore = parseInt(scoreElement.textContent);
             currentScore += 10;
             scoreElement.textContent = currentScore;
+            
+            // Save to data
+            loveData.lovePoints = currentScore;
+            saveData();
             
             // Update progress bar with animation
             const progressBar = scoreElement.parentElement.querySelector('.progress-fill');
@@ -959,7 +1228,8 @@
                 setTimeout(() => createFloatingHeart(), i * 200);
             }
             
-            alert('💕✨ +10 Love Points added! Every beautiful act of love makes your bond stronger and more amazing! 🌟');
+            addNotification(`💰 +10 Love Points added! Current balance: ${currentScore} points`);
+            alert('💕✨ +10 Love Points added! Every beautiful act of love makes Seemab & Arpita\'s bond stronger! 🌟');
         }
 
         function newAffirmation() {
@@ -996,13 +1266,16 @@
 
         function sendLoveEmergency() {
             const messages = [
-                '💕✨ Love SOS received! Remember: This feeling will pass like clouds. Your love is sunshine that always returns. Breathe deeply, then reach for each other with open hearts. 🤗💙',
-                '🆘💖 Emergency love activated! You two have survived every storm before this one. Your love is stronger than any temporary difficulty. Hold tight to each other. 🌈💕',
-                '💕🌟 Love emergency mode ON! Every couple has hard moments - it\'s what makes the beautiful moments even more precious. You\'re going to be okay. 🤗✨'
+                '💕✨ Love SOS received! Remember: This feeling will pass like clouds. Seemab & Arpita\'s love is sunshine that always returns. Breathe deeply, then reach for each other with open hearts. 🤗💙',
+                '🆘💖 Emergency love activated! Seemab & Arpita have survived every storm before this one. Your love is stronger than any temporary difficulty. Hold tight to each other. 🌈💕',
+                '💕🌟 Love emergency mode ON! Every couple has hard moments - it\'s what makes the beautiful moments even more precious. Seemab & Arpita are going to be okay. 🤗✨'
             ];
             
             const randomMessage = messages[Math.floor(Math.random() * messages.length)];
             document.getElementById('emergency-response').innerHTML = randomMessage;
+            
+            // Track emergency
+            addNotification('🆘 Love SOS activated! Someone needs extra love and support right now.');
             
             // Create multiple hearts for emergency
             for (let i = 0; i < 5; i++) {
@@ -1012,13 +1285,15 @@
 
         function requestHug() {
             const hugMessages = [
-                '🤗💕 Cuddle request sent with love! Physical touch heals hearts and souls. Find each other and hold tight. Love always wins, always. 💖✨',
-                '🤗🌸 Hug SOS activated! Sometimes we just need to feel held and loved. Wrap each other up and remember how safe you are together. 💙🌟',
-                '🤗💜 Cuddle emergency! The best medicine for hard moments is being close to the person who loves you most. Snuggle time activated! 💕✨'
+                '🤗💕 Cuddle request sent with love! Physical touch heals hearts and souls. Seemab & Arpita should find each other and hold tight. Love always wins, always. 💖✨',
+                '🤗🌸 Hug SOS activated! Sometimes we just need to feel held and loved. Seemab & Arpita should wrap each other up and remember how safe they are together. 💙🌟',
+                '🤗💜 Cuddle emergency! The best medicine for hard moments is being close to the person who loves you most. Seemab & Arpita snuggle time activated! 💕✨'
             ];
             
             const randomHugMessage = hugMessages[Math.floor(Math.random() * hugMessages.length)];
             document.getElementById('emergency-response').innerHTML = randomHugMessage;
+            
+            addNotification('🤗 Hug request sent! Someone needs cuddles and physical comfort.');
             createSparkles(event.target);
         }
 
@@ -1073,12 +1348,24 @@
         function saveLoveLetter() {
             const letter = event.target.previousElementSibling.value;
             if (letter.trim()) {
+                const letterData = {
+                    text: letter,
+                    author: Math.random() > 0.5 ? 'Seemab' : 'Arpita', // You can modify this logic
+                    date: new Date().toLocaleDateString(),
+                    timestamp: new Date().toLocaleString()
+                };
+                
+                loveData.letters.unshift(letterData);
+                saveData();
+                
                 const letterDiv = document.createElement('div');
                 letterDiv.style.cssText = 'background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0.6)); padding: 20px; border-radius: 15px; margin: 15px 0; border: 2px solid rgba(255, 192, 203, 0.4);';
-                letterDiv.innerHTML = `<em>"${letter}" 💕✨</em>`;
-                document.getElementById('love-letters').appendChild(letterDiv);
+                letterDiv.innerHTML = `<em>"${letter}" 💕✨</em><br><small style="color:#666;">- ${letterData.author}, ${letterData.date}</small>`;
+                document.getElementById('love-letters').prepend(letterDiv);
                 
-                alert('💌✨ Love letter saved forever in your beautiful vault! Whenever doubt tries to creep in, come back and read how deeply you mean to each other. Your love is real and magical! 💕👑');
+                addNotification(`💌 ${letterData.author} saved a beautiful love letter to the vault!`);
+                
+                alert('💌✨ Love letter saved forever in Seemab & Arpita\'s beautiful vault! Whenever doubt tries to creep in, come back and read how deeply you mean to each other. Your love is real and magical! 💕👑');
                 event.target.previousElementSibling.value = '';
                 
                 // Create celebration hearts
@@ -1088,19 +1375,39 @@
             }
         }
 
+        // View all activity
+        function viewAllActivity() {
+            const activities = loveData.activities.map(a => `${a.timestamp}: ${a.message}`).join('\n');
+            alert('📜 All Love Activity:\n\n' + (activities || 'No activities yet! Start using the app together! 💕'));
+        }
+
         // Load initial data
         document.addEventListener('DOMContentLoaded', function() {
+            // Load saved data
+            loadData();
+            
+            // Set welcome time
+            document.getElementById('welcome-time').textContent = new Date().toLocaleString();
+            
             // Set initial mood
             document.querySelector('.mood-btn[onclick*="❤️"]').click();
+            
+            // Request notification permission
+            requestNotificationPermission();
             
             // Create initial floating hearts
             setTimeout(() => createFloatingHeart(), 500);
             setTimeout(() => createFloatingHeart(), 1500);
             setTimeout(() => createFloatingHeart(), 2500);
             
+            // Initial welcome notification
+            setTimeout(() => {
+                addNotification('💕 Seemab & Arpita Love Compass activated! Welcome to your beautiful love journey! ✨');
+            }, 1000);
+            
             // Welcome message
             setTimeout(() => {
-                alert('💕✨ Welcome to Our Love Compass! 👑\n\nThis beautiful space is created just for you two to:\n🌟 Share daily love and joy\n💍 Plan your magical future together\n🕊️ Resolve any conflicts with love and care\n📈 Watch your amazing love grow stronger\n\nBuilding forever together, one beautiful day at a time! You two are absolutely incredible! 💕🌸✨');
+                alert('💕✨ Welcome to Seemab & Arpita Love Compass! 👑\n\nThis beautiful space is created just for you two to:\n🌟 Share daily love and joy\n💍 Plan your magical future together\n🕊️ Resolve any conflicts with love and care\n📈 Watch your amazing love grow stronger\n\nAll your activities are saved and you\'ll get notifications when either of you uses the app!\n\nBuilding forever together, one beautiful day at a time! Seemab & Arpita are absolutely incredible! 💕🌸✨');
             }, 2000);
         });
 
