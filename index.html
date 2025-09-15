@@ -536,24 +536,78 @@
         /* Notification System */
         .notification-center {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 10px;
+            right: 10px;
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 20px;
+            border-radius: 15px;
+            padding: 15px;
             box-shadow: 0 10px 30px rgba(255, 105, 180, 0.3);
             border: 2px solid rgba(255, 192, 203, 0.4);
-            max-width: 300px;
+            max-width: 280px;
             z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .notification-center.minimized {
+            width: 50px;
+            height: 50px;
+            padding: 0;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .notification-center.minimized * {
+            display: none;
+        }
+
+        .notification-center.minimized::before {
+            content: '💕';
+            font-size: 1.5rem;
+            display: block;
+        }
+
+        .notification-toggle {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #ff6b9d;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-header {
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            margin-bottom: 10px;
+        }
+
+        .notification-header h4 {
+            color: #c44569;
+            margin: 0;
+            font-size: 1rem;
         }
 
         .notification {
             background: linear-gradient(135deg, #ff9a9e, #fecfef);
-            padding: 15px;
-            border-radius: 15px;
-            margin-bottom: 10px;
-            border-left: 5px solid #ff6b9d;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            border-left: 3px solid #ff6b9d;
             animation: slideIn 0.3s ease;
+            font-size: 0.85rem;
         }
 
         .notification:last-child {
@@ -561,36 +615,77 @@
         }
 
         .notification-time {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             color: #666;
-            margin-top: 5px;
+            margin-top: 3px;
         }
 
-        .activity-log {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            padding: 20px;
-            margin-top: 20px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .activity-item {
-            padding: 10px;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
-            border-radius: 10px;
-            font-size: 0.9rem;
+        .notification-controls {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
         }
 
         .data-export {
             background: linear-gradient(135deg, #74b9ff, #0984e3);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 15px;
+            padding: 8px 12px;
+            border-radius: 12px;
             cursor: pointer;
-            margin: 5px;
+            font-size: 0.8rem;
+            flex: 1;
+        }
+
+        /* Mobile-specific styles */
+        @media (max-width: 768px) {
+            .notification-center {
+                top: 5px;
+                right: 5px;
+                left: 5px;
+                max-width: none;
+                width: auto;
+            }
+
+            .notification-center.minimized {
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                left: auto;
+                width: 45px;
+                height: 45px;
+            }
+
+            .notification-center.minimized::before {
+                font-size: 1.2rem;
+            }
+
+            .notification {
+                font-size: 0.8rem;
+                padding: 8px;
+            }
+
+            .notification-time {
+                font-size: 0.65rem;
+            }
+
+            .data-export {
+                padding: 6px 10px;
+                font-size: 0.75rem;
+            }
+
+            /* Hide notification center by default on mobile */
+            .notification-center:not(.show) {
+                transform: translateY(-100%);
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .notification-center.minimized:not(.show) {
+                transform: translateY(0);
+                opacity: 1;
+                pointer-events: all;
+            }
         }
 
         /* PWA Install Button */
@@ -1051,21 +1146,36 @@
             }
         }
 
+        // Clear notifications
+        function clearNotifications() {
+            loveData.activities = [];
+            saveData();
+            updateNotifications();
+            updateActivityLog();
+            addNotification('🗑️ Notifications cleared!');
+        }
+
         // Update notification display
         function updateNotifications() {
             const container = document.getElementById('notifications');
             container.innerHTML = '';
             
-            const recent = loveData.activities.slice(0, 5);
+            const recent = loveData.activities.slice(0, 3); // Show only 3 on mobile
             recent.forEach(activity => {
                 const notif = document.createElement('div');
                 notif.className = 'notification';
                 notif.innerHTML = `
                     <div>${activity.message}</div>
-                    <div class="notification-time">${activity.timestamp}</div>
+                    <div class="notification-time">${new Date(activity.time).toLocaleTimeString()}</div>
                 `;
                 container.appendChild(notif);
             });
+
+            // Show notification badge
+            const badge = document.querySelector('.notification-badge');
+            if (badge) {
+                badge.textContent = loveData.activities.length > 9 ? '9+' : loveData.activities.length;
+            }
         }
 
         // Update activity log
@@ -1097,13 +1207,24 @@
             addNotification('📥 Love data exported by ' + (Math.random() > 0.5 ? 'Seemab' : 'Arpita') + '!');
         }
 
-        // Clear notifications
-        function clearNotifications() {
-            loveData.activities = [];
-            saveData();
-            updateNotifications();
-            updateActivityLog();
-            addNotification('🗑️ Notifications cleared!');
+        // Toggle notification center
+        function toggleNotifications() {
+            const center = document.getElementById('notification-center');
+            center.classList.toggle('minimized');
+            center.classList.toggle('show');
+        }
+
+        // Auto-minimize on mobile after 3 seconds
+        function autoMinimizeOnMobile() {
+            if (window.innerWidth <= 768) {
+                setTimeout(() => {
+                    const center = document.getElementById('notification-center');
+                    if (!center.classList.contains('minimized')) {
+                        center.classList.add('minimized');
+                        center.classList.remove('show');
+                    }
+                }, 3000);
+            }
         }
 
         // Update UI with saved data
@@ -1590,6 +1711,9 @@
             // Set initial mood
             document.querySelector('.mood-btn[onclick*="❤️"]').click();
             
+            // Auto-minimize notifications on mobile
+            autoMinimizeOnMobile();
+            
             // Request notification permission
             setTimeout(() => {
                 loveNotifications.requestPermission();
@@ -1602,12 +1726,13 @@
             
             // Initial welcome notification
             setTimeout(() => {
-                addNotification('💕 Seemab & Arpita Love Compass activated! Welcome to your beautiful love journey! ✨');
+                addNotification('💕 Love Compass activated! ✨');
+                autoMinimizeOnMobile();
             }, 1000);
             
             // Welcome message
             setTimeout(() => {
-                alert('💕✨ Welcome to Seemab & Arpita Love Compass! 👑\n\nThis beautiful space is created just for you two to:\n🌟 Share daily love and joy\n💍 Plan your magical future together\n🕊️ Resolve any conflicts with love and care\n📈 Watch your amazing love grow stronger\n\n📱 INSTALL AS AN APP:\n• Tap "Install Love Compass App" to add to home screen\n• Get instant notifications when your partner needs you\n• Works offline and feels like a real app!\n\nAll your activities are saved and you\'ll get mobile notifications!\n\nBuilding forever together, one beautiful day at a time! 💕🌸✨');
+                alert('💕✨ Welcome to Seemab & Arpita Love Compass! 👑\n\nThis beautiful space is created just for you two to:\n🌟 Share daily love and joy\n💍 Plan your magical future together\n🕊️ Resolve any conflicts with love and care\n📈 Watch your amazing love grow stronger\n\n📱 INSTALL AS AN APP:\n• Tap "Install Love Compass App" to add to home screen\n• Get instant notifications when your partner needs you\n• Works offline and feels like a real app!\n\n💕 The notification panel will minimize automatically on mobile - tap the heart to expand it!\n\nBuilding forever together, one beautiful day at a time! 💕🌸✨');
             }, 3000);
         });
 
